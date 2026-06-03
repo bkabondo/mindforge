@@ -31,6 +31,17 @@ export default function StudyPage() {
   const [completed, setCompleted] = useState(0)
 
   useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (!flipped && cards.length > 0 && !isDone) setFlipped(true)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [flipped, cards.length, isDone])
+
+  useEffect(() => {
     async function load() {
       const supabase = createClient()
       const now = new Date().toISOString()
@@ -160,7 +171,7 @@ export default function StudyPage() {
             {/* Card */}
             <div className="study-card-container mb-6">
               <div
-                className={`study-card relative cursor-pointer`}
+                className={`study-card relative cursor-pointer ${flipped ? 'flipped' : ''}`}
                 style={{ height: '280px' }}
                 onClick={() => !flipped && setFlipped(true)}
               >
