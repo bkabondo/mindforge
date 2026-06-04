@@ -34,12 +34,12 @@ export default function StudyPage() {
     function onKey(e: KeyboardEvent) {
       if (e.code === 'Space') {
         e.preventDefault()
-        if (!flipped && cards.length > 0 && !isDone) setFlipped(true)
+        if (!flipped && cards.length > 0 && currentIndex < cards.length) setFlipped(true)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [flipped, cards.length, isDone])
+  }, [flipped, cards.length, currentIndex])
 
   useEffect(() => {
     async function load() {
