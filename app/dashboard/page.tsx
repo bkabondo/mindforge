@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import LogoutButton from '@/components/LogoutButton'
+import DeckSearch from '@/components/DeckSearch'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -89,6 +90,11 @@ export default async function DashboardPage() {
             </div>
             <div className="text-slate-400 text-sm">Decks Caught Up</div>
           </div>
+        </div>
+
+        {/* Search */}
+        <div className="mb-6">
+          <DeckSearch />
         </div>
 
         {/* Header */}

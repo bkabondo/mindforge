@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
 
 interface Card {
   id: string
@@ -62,6 +63,27 @@ export default function DeckDetailPage() {
       else next.add(cardId)
       return next
     })
+  }
+
+  const [shareEmail, setShareEmail] = useState('')
+  const [sharing, setSharing] = useState(false)
+  const [showShare, setShowShare] = useState(false)
+
+  async function handleShare(e: React.FormEvent) {
+    e.preventDefault()
+    if (!shareEmail.trim()) return
+    setSharing(true)
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    const senderName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Someone'
+    const res = await fetch('/api/email/share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recipientEmail: shareEmail.trim(), deckName: deck?.name, deckId, cardCount: cards.length, senderName }),
+    })
+    setSharing(false)
+    if (res.ok) { toast.success(`Deck shared with ${shareEmail}!`); setShareEmail(''); setShowShare(false) }
+    else { const d = await res.json(); toast.error(d.error || 'Failed to send') }
   }
 
   const now = new Date()
@@ -122,12 +144,34 @@ export default function DeckDetailPage() {
               )}
             </div>
           </div>
-          <Link href={`/study/${deck.id}`}>
-            <Button className="bg-purple-600 hover:bg-purple-700" disabled={dueCount === 0}>
-              {dueCount > 0 ? `Study Now (${dueCount})` : 'All caught up!'}
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowShare(s => !s)} className="text-sm text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 px-3 py-2 rounded-lg transition-colors">
+              Share ↗
+            </button>
+            <Link href={`/study/${deck.id}`}>
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                {dueCount > 0 ? `Study Now (${dueCount})` : 'Study All'}
+              </Button>
+            </Link>
+          </div>
         </div>
+
+        {showShare && (
+          <form onSubmit={handleShare} className="flex gap-2 mb-6">
+            <input
+              type="email"
+              value={shareEmail}
+              onChange={e => setShareEmail(e.target.value)}
+              placeholder="friend@email.com"
+              required
+              className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-purple-500"
+            />
+            <Button type="submit" disabled={sharing} className="bg-purple-600 hover:bg-purple-700 text-sm">
+              {sharing ? 'Sending...' : 'Send Invite'}
+            </Button>
+            <button type="button" onClick={() => setShowShare(false)} className="text-slate-400 hover:text-white px-2">✕</button>
+          </form>
+        )}
 
         <p className="text-slate-500 text-sm mb-6">Click any card to reveal the answer.</p>
 

@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
+interface FlashCard { front: string; back: string }
+
 export default function NewDeckPage() {
   const router = useRouter()
   const [name, setName] = useState('')
@@ -16,6 +18,8 @@ export default function NewDeckPage() {
   const [sourceText, setSourceText] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [guestCards, setGuestCards] = useState<FlashCard[] | null>(null)
+  const [flipped, setFlipped] = useState<Record<number, boolean>>({})
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -46,6 +50,12 @@ export default function NewDeckPage() {
         return
       }
 
+      if (data.guest) {
+        setGuestCards(data.cards)
+        setLoading(false)
+        return
+      }
+
       router.push(`/decks/${data.deckId}`)
     } catch {
       setError('Network error. Please try again.')
@@ -53,17 +63,65 @@ export default function NewDeckPage() {
     }
   }
 
+  if (guestCards) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white">
+        <nav className="border-b border-slate-800 px-6 py-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+              <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-sm">MF</div>
+              MindForge
+            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">Sign in</Link>
+              <Link href="/signup" className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors">Save deck →</Link>
+            </div>
+          </div>
+        </nav>
+
+        <main className="max-w-4xl mx-auto px-6 py-10">
+          <h2 className="text-2xl font-bold mb-1">{name}</h2>
+          {description && <p className="text-slate-400 text-sm mb-3">{description}</p>}
+          <p className="text-slate-500 text-sm mb-6">{guestCards.length} cards · Click any card to flip</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {guestCards.map((card, i) => (
+              <button
+                key={i}
+                onClick={() => setFlipped(f => ({ ...f, [i]: !f[i] }))}
+                className="text-left rounded-xl border border-slate-700 bg-slate-800/80 p-5 min-h-[120px] hover:border-purple-500/50 transition-all"
+              >
+                <div className="text-xs text-purple-400 font-semibold uppercase tracking-wider mb-2">
+                  {flipped[i] ? 'Answer' : 'Question'}
+                </div>
+                <p className="text-sm leading-relaxed">{flipped[i] ? card.back : card.front}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <button onClick={() => { setGuestCards(null); setName(''); setSourceText(''); setDescription('') }}
+              className="text-slate-500 hover:text-white text-sm transition-colors">
+              ← Generate another deck
+            </button>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white">
       <nav className="border-b border-slate-800 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
             <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-sm">MF</div>
             MindForge
           </Link>
-          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors">
-            Back to Dashboard
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">Sign in</Link>
+            <Link href="/signup" className="text-slate-400 hover:text-white text-sm transition-colors">Sign up</Link>
+          </div>
         </div>
       </nav>
 
@@ -147,7 +205,7 @@ export default function NewDeckPage() {
                     'Generate Flashcards with AI'
                   )}
                 </Button>
-                <Link href="/dashboard">
+                <Link href="/">
                   <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
                     Cancel
                   </Button>

@@ -35,6 +35,12 @@ export default function StudyPage() {
       if (e.code === 'Space') {
         e.preventDefault()
         if (!flipped && cards.length > 0 && currentIndex < cards.length) setFlipped(true)
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault()
+        if (currentIndex > 0) { setCurrentIndex(i => i - 1); setFlipped(false) }
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault()
+        if (currentIndex < cards.length - 1) { setCurrentIndex(i => i + 1); setFlipped(false) }
       }
     }
     window.addEventListener('keydown', onKey)
@@ -144,32 +150,50 @@ export default function StudyPage() {
         {cards.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold mb-2">No cards due!</h2>
-            <p className="text-slate-400 mb-6">All cards in this deck are scheduled for future review. Check back later!</p>
-            <Link href={`/decks/${deckId}`}>
-              <Button className="bg-purple-600 hover:bg-purple-700">View Deck</Button>
-            </Link>
+            <h2 className="text-2xl font-bold mb-2">All caught up!</h2>
+            <p className="text-slate-400 mb-6">No cards due right now — great job keeping up!</p>
+            <div className="flex gap-4 justify-center">
+              <Link href={`/decks/${deckId}`}>
+                <Button className="bg-purple-600 hover:bg-purple-700">Browse All Cards</Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">Dashboard</Button>
+              </Link>
+            </div>
           </div>
         ) : isDone ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏆</div>
             <h2 className="text-2xl font-bold mb-2">Session Complete!</h2>
             <p className="text-slate-400 mb-6">You reviewed all {completed} cards. Great work!</p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/dashboard">
-                <Button className="bg-purple-600 hover:bg-purple-700">Back to Dashboard</Button>
-              </Link>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <button
+                onClick={() => { setCurrentIndex(0); setCompleted(0); setFlipped(false) }}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg font-medium transition-colors"
+              >
+                Study Again
+              </button>
               <Link href={`/decks/${deckId}`}>
-                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
-                  View Deck
-                </Button>
+                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">Browse All Cards</Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">Dashboard</Button>
               </Link>
             </div>
           </div>
         ) : (
           <div>
-            {/* Card */}
-            <div className="study-card-container mb-6">
+            {/* Card with left/right nav arrows */}
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => { if (currentIndex > 0) { setCurrentIndex(i => i - 1); setFlipped(false) } }}
+                disabled={currentIndex === 0}
+                className="flex-shrink-0 w-10 h-10 rounded-full bg-slate-700 hover:bg-slate-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+                title="Previous card (←)"
+              >
+                ←
+              </button>
+              <div className="study-card-container flex-1">
               <div
                 className={`study-card relative cursor-pointer ${flipped ? 'flipped' : ''}`}
                 style={{ height: '280px' }}
@@ -201,6 +225,15 @@ export default function StudyPage() {
                   <span className="text-slate-500 text-xs text-center">Rate your confidence below</span>
                 </div>
               </div>
+              </div>
+              <button
+                onClick={() => { if (currentIndex < cards.length - 1) { setCurrentIndex(i => i + 1); setFlipped(false) } }}
+                disabled={currentIndex >= cards.length - 1}
+                className="flex-shrink-0 w-10 h-10 rounded-full bg-slate-700 hover:bg-slate-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+                title="Next card (→)"
+              >
+                →
+              </button>
             </div>
 
             {/* Manually handle flip state */}

@@ -14,10 +14,10 @@ export default function LandingPage() {
             Log in
           </Link>
           <Link
-            href="/signup"
+            href="/decks/new"
             className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-medium transition-colors"
           >
-            Get Started
+            Demo
           </Link>
         </div>
       </nav>
@@ -36,10 +36,10 @@ export default function LandingPage() {
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
-            href="/signup"
+            href="/decks/new"
             className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-xl font-semibold text-lg transition-all hover:scale-105"
           >
-            Start for Free
+            Demo
           </Link>
           <Link
             href="/login"
@@ -100,19 +100,19 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-6 py-20 text-center">
         <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-700/30 rounded-3xl p-12">
           <h2 className="text-4xl font-bold mb-4">Ready to forge your mind?</h2>
-          <p className="text-slate-400 text-lg mb-8">Join thousands of learners who are studying smarter with MindForge.</p>
+          <p className="text-slate-400 text-lg mb-8">Paste any text and get AI-generated flashcards in seconds — then study with spaced repetition.</p>
           <Link
-            href="/signup"
+            href="/decks/new"
             className="bg-purple-600 hover:bg-purple-700 px-10 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-105 inline-block"
           >
-            Create Free Account
+            Demo It Free
           </Link>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-slate-800 px-6 py-8 text-center text-slate-500 text-sm">
-        <p>MindForge &copy; 2024 &mdash; AI-powered spaced repetition learning</p>
+        <p>MindForge &copy; 2026 &mdash; AI-powered spaced repetition learning</p>
       </footer>
     </div>
   )

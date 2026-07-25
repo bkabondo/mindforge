@@ -48,5 +48,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const type = new URL(request.url).searchParams.get('type')
+  if (type === 'recovery') {
+    return NextResponse.redirect(`${origin}/auth/reset-password`)
+  }
   return NextResponse.redirect(`${origin}/dashboard`)
 }
