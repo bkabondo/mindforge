@@ -48,9 +48,13 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const type = new URL(request.url).searchParams.get('type')
+  const type = requestUrl.searchParams.get('type')
   if (type === 'recovery') {
     return NextResponse.redirect(`${origin}/auth/reset-password`)
   }
-  return NextResponse.redirect(`${origin}/dashboard`)
+  // Same-site paths only. "//evil.com" is protocol-relative and would send
+  // the user off-site once appended to origin.
+  const requestedNext = requestUrl.searchParams.get('next') ?? '/dashboard'
+  const next = /^\/(?!\/)/.test(requestedNext) ? requestedNext : '/dashboard'
+  return NextResponse.redirect(`${origin}${next}`)
 }
