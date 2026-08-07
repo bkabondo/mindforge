@@ -2,10 +2,10 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 const ACCOUNTS = [
-  { email: 'kabondobenjamin1@gmail.com', password: 'Admin@Kabondo123!', full_name: 'Benjamin Kabondo', role: 'admin' },
-  { email: 'testuser1@proj.com', password: 'TestUser1@123', full_name: 'Alice Johnson', role: 'user' },
-  { email: 'testuser2@proj.com', password: 'TestUser2@123', full_name: 'Bob Smith', role: 'user' },
-  { email: 'testuser3@proj.com', password: 'TestUser3@123', full_name: 'Carol Davis', role: 'user' },
+  { email: 'kabondobenjamin1@gmail.com', password: process.env.SEED_ADMIN_PASSWORD!, full_name: 'Benjamin Kabondo', role: 'admin' },
+  { email: 'testuser1@proj.com', password: process.env.SEED_TEST_PASSWORD!, full_name: 'Alice Johnson', role: 'user' },
+  { email: 'testuser2@proj.com', password: process.env.SEED_TEST_PASSWORD!, full_name: 'Bob Smith', role: 'user' },
+  { email: 'testuser3@proj.com', password: process.env.SEED_TEST_PASSWORD!, full_name: 'Carol Davis', role: 'user' },
 ]
 
 export async function POST(request: Request) {

@@ -5,10 +5,10 @@ const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY
 if (!SERVICE_ROLE) { console.error('SUPABASE_SERVICE_ROLE_KEY not set'); process.exit(1) }
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE, {auth:{autoRefreshToken:false,persistSession:false}})
 const accounts = [
-  {email:'kabondobenjamin1@gmail.com',password:'Admin@Kabondo123!',full_name:'Benjamin Kabondo',role:'admin'},
-  {email:'testuser1@proj.com',password:'TestUser1@123',full_name:'Alice Johnson',role:'user'},
-  {email:'testuser2@proj.com',password:'TestUser2@123',full_name:'Bob Smith',role:'user'},
-  {email:'testuser3@proj.com',password:'TestUser3@123',full_name:'Carol Davis',role:'user'},
+  {email:'kabondobenjamin1@gmail.com',password:process.env.SEED_ADMIN_PASSWORD,full_name:'Benjamin Kabondo',role:'admin'},
+  {email:'testuser1@proj.com',password:process.env.SEED_TEST_PASSWORD,full_name:'Alice Johnson',role:'user'},
+  {email:'testuser2@proj.com',password:process.env.SEED_TEST_PASSWORD,full_name:'Bob Smith',role:'user'},
+  {email:'testuser3@proj.com',password:process.env.SEED_TEST_PASSWORD,full_name:'Carol Davis',role:'user'},
 ]
 async function seed() {
   const {data:{users:existing}} = await admin.auth.admin.listUsers()
